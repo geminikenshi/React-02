@@ -6,15 +6,16 @@ const initialGameBoard = [
   [null, null, null],
 ];
 
-export default function GameBoard() {
+export default function GameBoard({ onSelect, activePlayerSymbol }) {
   const [gameBoard, setGameBoard] = useState(initialGameBoard);
 
   function handleBoardClick(rowIndex, colIndex) {
     setGameBoard((prevGameBoard) => {
       const updatedBoard = structuredClone(prevGameBoard);
-      updatedBoard[rowIndex][colIndex] = "X";
+      updatedBoard[rowIndex][colIndex] = activePlayerSymbol;
       return updatedBoard;
     });
+    onSelect();
   }
 
   return (
