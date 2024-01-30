@@ -5,11 +5,16 @@ import { WINNING_COMBINATIONS } from "./winning-combination";
 import GameOver from "./components/GameOver";
 import { useState } from "react";
 
-const initialGameBoard = [
+const INITIAL_GAME_BOARD = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
 ];
+
+const PLAYERS = {
+  "❌": "Player 1",
+  "⭕": "Player 2",
+};
 
 function deriveActivePlayer(gameTurns) {
   let currentPlayer = "❌";
@@ -42,7 +47,7 @@ function deriveWinner(gameBoard, players, gameTurns) {
 }
 
 function deriveGameBoard(gameTurns) {
-  const gameBoard = structuredClone(initialGameBoard);
+  const gameBoard = structuredClone(INITIAL_GAME_BOARD);
   for (const turn of gameTurns) {
     const { square, player } = turn;
     const { row, col } = square;
@@ -54,10 +59,7 @@ function deriveGameBoard(gameTurns) {
 function App() {
   // const [activePlayer, setActivePlayer] = useState("X");
   const [gameTurns, setGameTurns] = useState([]);
-  const [players, setPlayers] = useState({
-    "❌": "Player 1",
-    "⭕": "Player 2",
-  });
+  const [players, setPlayers] = useState(PLAYERS);
 
   const activePlayer = deriveActivePlayer(gameTurns);
 
@@ -92,13 +94,13 @@ function App() {
       <div id="game-container">
         <ol id="players" className="highlight-player">
           <Player
-            name={"Player 1"}
+            name={PLAYERS["❌"]}
             symbol={"❌"}
             isActive={activePlayer === "X"}
             onChangeName={handleSetPlayerName}
           />
           <Player
-            name={"Player 2"}
+            name={PLAYERS["⭕"]}
             symbol={"⭕"}
             isActive={activePlayer === "O"}
             onChangeName={handleSetPlayerName}
