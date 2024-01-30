@@ -12,29 +12,16 @@ const initialGameBoard = [
 ];
 
 function deriveActivePlayer(gameTurns) {
-  let currentPlayer = "X";
-  if (gameTurns.length > 0 && gameTurns.at(0).player === "X") {
-    currentPlayer = "O";
+  let currentPlayer = "❌";
+  if (gameTurns.length > 0 && gameTurns.at(0).player === "❌") {
+    currentPlayer = "⭕";
   }
 
   return currentPlayer;
 }
 
-function App() {
-  // const [activePlayer, setActivePlayer] = useState("X");
-  const [gameTurns, setGameTurns] = useState([]);
-
-  const activePlayer = deriveActivePlayer(gameTurns);
-
-  const gameBoard = structuredClone(initialGameBoard);
-
+function deriveWinner(gameBoard, players, gameTurns) {
   let winner = "";
-
-  for (const turn of gameTurns) {
-    const { square, player } = turn;
-    const { row, col } = square;
-    gameBoard[row][col] = player;
-  }
 
   for (const combination of WINNING_COMBINATIONS) {
     const firstSquareSymbol =
@@ -48,11 +35,42 @@ function App() {
       firstSquareSymbol === secondSquareSymbol &&
       firstSquareSymbol === thirdSquareSymbol
     ) {
-      winner = firstSquareSymbol;
+      winner = players[firstSquareSymbol];
     }
   }
+  return winner;
+}
+
+function deriveGameBoard(gameTurns) {
+  const gameBoard = structuredClone(initialGameBoard);
+  for (const turn of gameTurns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+    gameBoard[row][col] = player;
+  }
+  return gameBoard;
+}
+
+function App() {
+  // const [activePlayer, setActivePlayer] = useState("X");
+  const [gameTurns, setGameTurns] = useState([]);
+  const [players, setPlayers] = useState({
+    "❌": "Player 1",
+    "⭕": "Player 2",
+  });
+
+  const activePlayer = deriveActivePlayer(gameTurns);
+
+  const gameBoard = deriveGameBoard(gameTurns);
+  const winner = deriveWinner(gameBoard, players);
 
   const hasDraw = gameTurns.length === 9 && !winner;
+
+  function handleSetPlayerName(symbol, newName) {
+    setPlayers((prevPlayers) => {
+      return { ...prevPlayers, [symbol]: newName };
+    });
+  }
 
   function handleSelectSquare(rowIndex, colIndex) {
     // setActivePlayer((currActivePlayer) =>
@@ -77,11 +95,13 @@ function App() {
             name={"Player 1"}
             symbol={"❌"}
             isActive={activePlayer === "X"}
+            onChangeName={handleSetPlayerName}
           />
           <Player
             name={"Player 2"}
             symbol={"⭕"}
             isActive={activePlayer === "O"}
+            onChangeName={handleSetPlayerName}
           />
         </ol>
 
